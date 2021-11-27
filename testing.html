@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>testing</title>
+</head>
+<body>
+    <p>ooga booga</p>
+    <canvas id="square" width="500" height = "500"></canvas>
+    <script src="paper-core.js"></script>
+    <script src="app.js"></script>
+    <script type="text/javascript" data-paper-ignore="true">
+        console.log(yeesh); //variable from app.js, just to make sure it imported
+        paper.setup(document.getElementById("square"))
+
+        point1 = new paper.Point(200,200)
+        point2 = new paper.Point(300,300)
+        point3 = new paper.Point(100,100)
+        flaps = [point1,point2]
+        paper.view.onFrame = function(event){
+            paper.project.clear()
+            var flap1 = new paper.Path.Circle({
+                center: point1,
+                radius: 120,
+                fillColor: 'lime',
+                strokeColor: 'black'
+            })
+            var flap2 = new paper.Path.Circle({
+                center: point2,
+                radius: 80,
+                fillColor: 'lavender',
+                strokeColor: 'black'
+            })
+            if (point1.getDistance(point2) < 80+120-0.1){
+                path12 = new paper.Path.Line(point1,point2)
+                path12.strokeColor = 'red'
+                overlap = 80+120-point1.getDistance(point2)
+                point1.x += overlap*(point1.x - point2.x)*0.001
+                point1.y += overlap*(point1.y - point2.y)*0.001
+                point2.x += overlap*(point2.x - point1.x)*0.001
+                point2.y += overlap*(point2.y - point1.y)*0.001
+            }
+            for (var i = 0; i<flaps.length; i++){
+                if (flaps[i].x>500){
+                    flaps[i].x -= flaps[i].x-500
+                }
+                if (flaps[i].y>500){
+                    flaps[i].y -= flaps[i].y-500
+                }
+                if (flaps[i].x<0){
+                    flaps[i].x -= flaps[i].x-0
+                }
+                if (flaps[i].y<0){
+                    flaps[i].y -= flaps[i].y-0
+                }
+            }
+            var border = new paper.Path.Rectangle(0,0,500,500);
+            border.strokeColor = 'black';
+            border.strokeWidth = 2;
+        }
+        var selected = point2
+        paper.view.onMouseDown = function(event) {
+	        if(event.point.getDistance(point2)<80){
+                selected = point2
+                console.log(selected)
+                return
+            }
+            if(event.point.getDistance(point1)<120){
+                selected = point1
+                console.log(selected)
+            }
+        }
+        paper.view.onMouseDrag = function(event){
+            selected.x += event.delta.x
+            selected.y += event.delta.y
+            if (selected.x>500){
+                selected.x -= selected.x-500
+            }
+            if (selected.y>500){
+                selected.y -= selected.y-500
+            }
+        }
+        paper.view.draw();
+
+        /*
+        var secondlayer = new paper.Layer();
+        secondlayer.clipped = true
+        new paper.Path.Circle({
+            center: new paper.Point(100,100),
+            radius: 80,
+            fillColor: 'yellow'
+        })
+        
+
+        riverr = 40
+        flap1c = new paper.Point(130,200)
+        flap2c = new paper.Point(340,200)
+        flap1r = 60
+        flap2r = 72
+        var left = new paper.Path.Circle({
+            center: flap1c,
+            radius: flap1r + riverr,
+            //strokeColor: 'black',
+            //fillColor: 'purple'
+        })
+        var right = new paper.Path.Circle({
+            center: flap2c,
+            radius: flap2r + riverr,
+            //strokeColor: 'black',
+            //fillColor: 'cyan'
+        })
+        secondlayer.addChild(left)
+        var intersection = new paper.Path.Circle({
+            center: left.getIntersections(right)[0].point,
+            radius: riverr,
+            //strokeColor: 'black'
+        })
+        var intersection2 = new paper.Path.Circle({
+            center: left.getIntersections(right)[1].point,
+            radius: riverr,
+            //strokeColor: 'black'
+        })
+        test = left.exclude(right)
+        test = test.unite(intersection2.intersect(left).intersect(right))
+        test = test.unite(intersection.intersect(left).intersect(right))
+        test.fillColor = 'cyan'
+        test.strokeColor = 'blackx'
+        //test = test.unite(intersection.intersect(left).intersect(right))
+        left.remove();
+        right.remove();
+        intersection.remove();
+        
+        var flap1 = new paper.Path.Circle({
+            center:flap1c,
+            radius: flap1r,
+            fillColor: 'lime',
+            strokeColor:'black'
+        })
+        var flap2 = new paper.Path.Circle({
+            center:flap2c,
+            radius:flap2r,
+            fillColor:'lime',
+            strokeColor:'black'
+        })
+
+        var overlap = new paper.Path()
+        overlap.add(new paper.Point(200,100),new paper.Point(320,300),new paper.Point(300,230))
+        overlap.add(new paper.Point(100,170))
+        overlap.fillColor = 'pink'
+        */
+
+        //intersection.remove();
+        /*
+        var point1 = new paper.Point(100,120);
+        var point2 = new paper.Point(200,300);
+        var point3 = new paper.Point(300,20);
+        //var path1 = new paper.Path();
+        var activePathStyle = {
+            strokeColor: "lime",
+            strokeWidth: 2
+        }
+        //path1.add(point2,point1,point3);
+        //path1.style = activePathStyle;
+        border1 = new paper.Path.Rectangle(50,50,300,200);
+        border1.strokeColor = "black";
+        border1.strokeWidth = 3;
+
+        circles = []
+        for (var i=0;i<flaps.length;i++){
+            console.log(point0);
+            circle = new paper.Path.Circle(point0,flaps[i]);
+            circle.strokeColor = "purple";
+            circle.strokeWidth = 2;
+            circles.push(circle);
+        }
+        
+        paper.view.onFrame = function(event){
+            for (var i=0; i<circles.length;i++){
+                circles[i].remove();
+            }
+            circles = [];
+            for (var i=0;i<flaps.length;i++){
+                //console.log(point0);
+                circle= new paper.Path.Circle(point0,flaps[i]);
+                circle.strokeColor = "purple";
+                circle.strokeWidth = 2;
+                circles.push(circle);
+            }
+        }
+        paper.view.draw();
+        */
+    </script>
+</body>
+</html>
